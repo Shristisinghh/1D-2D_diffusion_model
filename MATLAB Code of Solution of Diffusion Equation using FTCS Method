@@ -1,0 +1,37 @@
+L=1-0;
+T=0.06-0;
+alpha=1;
+dx=0.05;
+dt=0.001;
+d=(alpha*dt)/(dx^2);
+N=L/dx+1;
+M=T/dt+1;
+x=zeros(N,1);
+t=zeros(M,1);
+for i=1:N
+x(i)=0+(i-1)*dx;
+end
+for n=1:M
+t(n)=0+(n-1)*dt;
+end
+U=zeros(M,N);
+U(:,1)=2;
+U(:,N)=1;
+U(M,2:N-1)=sin(pi*x(2:N-1));
+for n=1:M-1
+for i=2:N-1
+U(n+1,i)=d*U(n,i+1)+(1-2*d)*U(n,i)+d*U(n,i-1);
+fprintf('%.4f %.4f %.4f\n',t(n+1),x(i),U(n+1,i));
+end
+fprintf('t x U\n')
+end
+figure(1)
+plot(x,U(M,:))
+title('X vs U at t=0.06')
+xlabel('x')
+ylabel('concentration')
+figure(2)
+plot(t,U(:,(N-1)/2))
+title('t vs U at x=0.5')
+xlabel('time')
+ylabel('concentration')

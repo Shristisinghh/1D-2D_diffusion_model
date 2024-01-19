@@ -1,0 +1,54 @@
+tStart=cputime;
+L=0.04-0;
+T=1.08-0;
+alpha=0.000217;
+dx=0.001;
+dt=0.01;
+d=(alpha*dt)/(2*dx^2);
+N=round(L/dx+1);
+M=round(T/dt+1);
+x=zeros(N,1);
+t=zeros(M,1);
+for i=1:N
+x(i)=0+(i-1)*dx;
+end
+for n=1:M
+t(n)=0+(n-1)*dt;
+end
+U=zeros(M,N);
+U(:,1)=40;
+U(:,N)=0;
+U(1,2:N-1)=sin(pi*x(2:N-1));
+W= zeros(N-2,1);
+gamma=zeros(N-3,1);
+rho=zeros(N-2,1);
+
+for n=1:M-1
+W(1)=(1-2*d)*U(n,2)+d*U(n,3)+d*(U(n,1)+U(n+1,1));
+for i=2:N-3
+W(i)=d*U(n,i)+(1-2*d)*U(n,i+1)+d*U(n,i+2);
+end
+W(N-2)=d*U(n,N-2)+(1-2*d)*U(n,N-1)+d*(U(n,N)+U(n+1,N));
+rho(1)=W(1)/(1+2*d);
+gamma(1)=-d/(1+2*d);
+for i=2:N-3
+rho(i)=(W(i)+d*rho(i-1))/(1+2*d+d*gamma(i-1));
+gamma(i)=(-d)/(1+2*d+d*gamma(i-1));
+end
+rho(N-2)=(W(N-2)+d*rho(N-3))/(1+2*d+ d*gamma(N-3));
+Z(N-2)=rho(N-2);
+for k=N-3:-1:1
+Z(k)=rho(k)-gamma(k)*Z(k+1);
+
+end
+U(n+1,2:N-1)=Z;
+end
+figure(1)
+plot(x,U(M,:))
+title('X vs U at t=t-end') xlabel('x')
+ylabel(' Concentration')
+figure(2) plot(t,U(:,round(N/2)))
+title('t Vs U at x=x-centre')
+xlabel('Time')
+ylabel(' Concentration')
+tEnd= cputime - tStart;
